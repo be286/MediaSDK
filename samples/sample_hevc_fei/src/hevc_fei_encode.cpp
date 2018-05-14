@@ -41,6 +41,10 @@ FEI_Encode::FEI_Encode(MFXVideoSession* session, mfxHDL hdl,
     MSDK_ZERO_MEMORY(m_bitstream);
 
     m_repacker.reset(repacker);
+
+    MSDK_ZERO_MEMORY(m_ExtBRC);
+    m_ExtBRC.Header.BufferId = MFX_EXTBUFF_BRC;
+    m_ExtBRC.Header.BufferSz = sizeof(m_ExtBRC);
 }
 
 FEI_Encode::~FEI_Encode()
@@ -63,6 +67,7 @@ FEI_Encode::~FEI_Encode()
         {
             m_buf_allocator.Free(pQP);
         }
+        HEVCExtBRC::Destroy(m_ExtBRC);
     }
     catch(mfxError& ex)
     {
@@ -479,3 +484,15 @@ mfxStatus FEI_Encode::ResetIOState()
 
     return sts;
 }
+
+mfxStatus FEI_Encode::CreateExtBrc()
+{
+    mfxStatus sts = HEVCExtBRC::Create(m_ExtBRC);
+
+    mfxExtBRC* pBrc = m_videoParams.GetExtBuffer<mfxExtBRC>();
+    MSDK_CHECK_POINTER(pBrc, MFX_ERR_NULL_PTR);
+    *pBrc = m_ExtBRC;
+
+    return sts;
+}
+

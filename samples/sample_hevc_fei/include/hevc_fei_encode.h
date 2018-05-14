@@ -25,6 +25,7 @@ or https://software.intel.com/en-us/media-client-solutions-support.
 #include "ref_list_manager.h"
 #include "fei_buffer_allocator.h"
 #include "fei_predictors_repacking.h"
+#include "brc_routines.h"
 
 class FEI_Encode
 {
@@ -55,6 +56,8 @@ public:
 
     mfxStatus ResetIOState();
 
+    mfxStatus CreateExtBrc();
+
 private:
     MFXVideoSession*        m_pmfxSession;
     MFXVideoENCODE          m_mfxENCODE;
@@ -72,6 +75,8 @@ private:
     std::auto_ptr<PredictorsRepaking> m_repacker;
 
     mfxExtFeiHevcEncFrameCtrl m_defFrameCtrl; // contain default per-frame options including user-specified
+
+    mfxExtBRC                 m_ExtBRC;
 
     mfxU32  m_processedFrames;
 

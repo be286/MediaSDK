@@ -74,6 +74,8 @@ void PrintHelp(const msdk_char *strAppName, const msdk_char *strErrorMessage)
     msdk_printf(MSDK_STRING("   [-qp qp_value] - QP value for frames (default is 26)\n"));
     msdk_printf(MSDK_STRING("   [-DisableQPOffset] - disable QP offset per pyramid layer\n"));
     msdk_printf(MSDK_STRING("   [-f frameRate] - video frame rate (frames per second)\n"));
+    msdk_printf(MSDK_STRING("   [-b bitRate]   - target bitrate (Kbits per second)\n"));
+    msdk_printf(MSDK_STRING("   [-ExtBRC]      - enables external BRC\n"));
     msdk_printf(MSDK_STRING("   [-profile value] - codec profile\n"));
     msdk_printf(MSDK_STRING("   [-level value]   - codec level\n"));
     msdk_printf(MSDK_STRING("   [-idr_interval size] - if IdrInterval = 0, then only first I-frame is an IDR-frame\n"));
@@ -456,6 +458,15 @@ mfxStatus ParseInputString(msdk_char* strInput[], mfxU32 nArgNum, sInputParams& 
             CHECK_NEXT_VAL(i + 1 >= nArgNum, strInput[i], strInput[0]);
             PARSE_CHECK(msdk_opt_read(strInput[++i], params.encodeCtrl.SearchPath), "SearchPath", isParseInvalid);
         }
+        else if (0 == msdk_strcmp(strInput[i], MSDK_STRING("-ExtBRC")))
+        {
+            params.bExtBRC = true;
+        }
+        else if (0 == msdk_strcmp(strInput[i], MSDK_STRING("-b")))
+        {
+            CHECK_NEXT_VAL(i + 1 >= nArgNum, strInput[i], strInput[0]);
+            PARSE_CHECK(msdk_opt_read(strInput[++i], params.TargetKbps), "Bitrate", isParseInvalid);
+        }
         else if (0 == msdk_strcmp(strInput[i], MSDK_STRING("-DisableQPOffset")))
         {
             params.bDisableQPOffset = true;
@@ -700,6 +711,11 @@ void AdjustOptions(sInputParams& params)
     {
         msdk_printf(MSDK_STRING("WARNING: Encoded order is enabled by force in repackctrl.\n"));
         params.bEncodedOrder = true;
+    }
+
+    if (!params.bExtBRC && params.TargetKbps) {
+        msdk_printf(MSDK_STRING("WARNING: Target bitrate is ignored as external BRC is disabled\n"));
+        params.TargetKbps = 0;
     }
 }
 
