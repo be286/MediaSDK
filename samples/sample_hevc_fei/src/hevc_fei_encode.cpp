@@ -45,6 +45,12 @@ FEI_Encode::FEI_Encode(MFXVideoSession* session, mfxHDL hdl,
     MSDK_ZERO_MEMORY(m_ExtBRC);
     m_ExtBRC.Header.BufferId = MFX_EXTBUFF_BRC;
     m_ExtBRC.Header.BufferSz = sizeof(m_ExtBRC);
+
+    HEVCExtBRC::Create(m_ExtBRC);
+
+    mfxExtBRC* pBrc = m_videoParams.GetExtBuffer<mfxExtBRC>();
+    if (pBrc)
+        *pBrc = m_ExtBRC;
 }
 
 FEI_Encode::~FEI_Encode()
@@ -481,17 +487,6 @@ mfxStatus FEI_Encode::ResetIOState()
         sts = m_pFile_MVP_in->Seek(0, SEEK_SET);
         MSDK_CHECK_STATUS(sts, "FEI Encode: failed to rewind file with MVP");
     }
-
-    return sts;
-}
-
-mfxStatus FEI_Encode::CreateExtBrc()
-{
-    mfxStatus sts = HEVCExtBRC::Create(m_ExtBRC);
-
-    mfxExtBRC* pBrc = m_videoParams.GetExtBuffer<mfxExtBRC>();
-    MSDK_CHECK_POINTER(pBrc, MFX_ERR_NULL_PTR);
-    *pBrc = m_ExtBRC;
 
     return sts;
 }

@@ -526,6 +526,11 @@ mfxStatus CheckOptions(const sInputParams& params, const msdk_char* appName)
         PrintHelp(appName, "-w -h is not specified");
         return MFX_ERR_UNSUPPORTED;
     }
+    if (params.QP && params.bExtBRC)
+    {
+        PrintHelp(appName, "Invalid bitrate control (QP + ExtBRC is unsupported)");
+        return MFX_ERR_UNDEFINED_BEHAVIOR;
+    }
     if (params.QP > 51)
     {
         PrintHelp(appName, "Invalid QP value (must be in range [0, 51])");
@@ -716,6 +721,11 @@ void AdjustOptions(sInputParams& params)
     if (!params.bExtBRC && params.TargetKbps) {
         msdk_printf(MSDK_STRING("WARNING: Target bitrate is ignored as external BRC is disabled\n"));
         params.TargetKbps = 0;
+    }
+
+    if (!params.bExtBRC && !params.QP) {
+        msdk_printf(MSDK_STRING("WARNING: QP is not specified. Adjust to 26 (default)\n"));
+        params.QP = 26;
     }
 }
 

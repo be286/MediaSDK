@@ -110,7 +110,7 @@ struct sInputParams
         , bFormattedMVPin(false)
         , bQualityRepack(false)
         , bExtBRC(false)
-        , QP(26)
+        , QP(0)
         , dstWidth(0)
         , dstHeight(0)
         , nNumFrames(0)
@@ -229,6 +229,9 @@ template<>struct mfx_ext_buffer_id<mfxExtHEVCRefLists>{
 };
 template<>struct mfx_ext_buffer_id<mfxExtFeiHevcRepackCtrl>{
     enum {id = MFX_EXTBUFF_HEVCFEI_REPACK_CTRL};
+};
+template<>struct mfx_ext_buffer_id<mfxExtFeiHevcRepackStat>{
+    enum {id = MFX_EXTBUFF_HEVCFEI_REPACK_STAT};
 };
 template<>struct mfx_ext_buffer_id<mfxExtBRC> {
     enum {id = MFX_EXTBUFF_BRC};

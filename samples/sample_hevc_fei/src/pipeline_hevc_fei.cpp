@@ -617,10 +617,6 @@ FEI_Encode* CEncodingPipeline::CreateEncode(mfxFrameInfo& in_fi)
                                          m_inParams.repackctrlFile, m_inParams.repackstatFile,
                                          pRepacker.get());
 
-    if (m_inParams.bExtBRC) {
-        sts = pEncode->CreateExtBrc();
-        CHECK_STS_AND_RETURN(sts, "CreateEncode::pEncode->CreateExtBrc failed", NULL);
-    }
 
     pRepacker.release(); // FEI_Encode takes responsibility for pRepakcer's deallocation
 

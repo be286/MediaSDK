@@ -56,8 +56,6 @@ public:
 
     mfxStatus ResetIOState();
 
-    mfxStatus CreateExtBrc();
-
 private:
     MFXVideoSession*        m_pmfxSession;
     MFXVideoENCODE          m_mfxENCODE;
